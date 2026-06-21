@@ -91,8 +91,8 @@ describe("endpoint helpers", () => {
       "/v23.0/user/threads_insights",
       "/v23.0/keyword_search",
       "/v23.0/location_search",
-      "/v23.0/access_token",
-      "/v23.0/refresh_access_token",
+      "/access_token",
+      "/refresh_access_token",
       "/v23.0/debug_token",
       "/v23.0/oembed_threads",
       "/v23.0/user/mentions"

@@ -41,6 +41,7 @@ export interface RequestOptions {
   method?: HttpMethod;
   path: string;
   pathParams?: Record<string, string | number>;
+  apiVersion?: string | null;
   query?: QueryParams;
   body?: BodyParams;
   accessToken?: string | null;

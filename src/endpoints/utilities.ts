@@ -38,6 +38,7 @@ export class UtilitiesEndpoint {
     return this.client.request({
       method: "GET",
       path: "/access_token",
+      apiVersion: null,
       query: {
         grant_type: "th_exchange_token",
         client_secret: params.client_secret,
@@ -51,6 +52,7 @@ export class UtilitiesEndpoint {
     return this.client.request({
       method: "GET",
       path: "/refresh_access_token",
+      apiVersion: null,
       query: {
         grant_type: "th_refresh_token",
         access_token: accessToken

@@ -61,6 +61,15 @@ function expandPath(path: string, pathParams: Record<string, string | number> = 
   });
 }
 
+function buildUrl(baseUrl: string, defaultApiVersion: string, options: RequestOptions): URL {
+  const expandedPath = expandPath(options.path, options.pathParams);
+  const apiVersion = options.apiVersion === undefined ? defaultApiVersion : options.apiVersion;
+  const versionPrefix = apiVersion === null ? "" : `/${apiVersion}`;
+  const url = new URL(`${baseUrl}${versionPrefix}${expandedPath}`);
+  appendQuery(url, options.query);
+  return url;
+}
+
 function mergeSignals(timeoutMs: number, callerSignal?: AbortSignal): AbortSignal {
   const timeoutSignal = AbortSignal.timeout(timeoutMs);
   if (!callerSignal) {
@@ -97,11 +106,9 @@ export class ThreadsClient {
 
   async request<T = unknown>(options: RequestOptions): Promise<T> {
     const method = options.method ?? "GET";
-    const expandedPath = expandPath(options.path, options.pathParams);
-    const url = new URL(`${this.baseUrl}/${this.apiVersion}${expandedPath}`);
+    const url = buildUrl(this.baseUrl, this.apiVersion, options);
     const token =
       options.accessToken === null ? undefined : (options.accessToken ?? this.accessToken);
-    appendQuery(url, options.query);
 
     if (token) {
       url.searchParams.set("access_token", token);
@@ -223,9 +230,7 @@ export class ThreadsClient {
   }
 
   buildUrlForTest(options: RequestOptions): string {
-    const expandedPath = expandPath(options.path, options.pathParams);
-    const url = new URL(`${this.baseUrl}/${this.apiVersion}${expandedPath}`);
-    appendQuery(url, options.query);
+    const url = buildUrl(this.baseUrl, this.apiVersion, options);
     const token =
       options.accessToken === null ? undefined : (options.accessToken ?? this.accessToken);
     if (token) {
