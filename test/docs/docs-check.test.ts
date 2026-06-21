@@ -14,4 +14,21 @@ describe("generated docs", () => {
       expect(readme).toContain(endpoint.id);
     }
   });
+
+  it("keeps README branding aligned with package assets", async () => {
+    const [readme, packageJson] = await Promise.all([
+      readFile("README.md", "utf8"),
+      readFile("package.json", "utf8")
+    ]);
+    const pkg = JSON.parse(packageJson) as { files: string[] };
+
+    expect(readme).toContain(
+      "raw.githubusercontent.com/weiiiii0622/threads-sdk/main/media/icon.png"
+    );
+    expect(readme).toContain("img.shields.io/npm/v/thread-sdk-js");
+    expect(readme).toContain("img.shields.io/npm/dm/thread-sdk-js");
+    expect(readme).toContain("actions/workflows/release.yml");
+    expect(readme).toContain("img.shields.io/node/v/thread-sdk-js");
+    expect(pkg.files).toContain("media");
+  });
 });

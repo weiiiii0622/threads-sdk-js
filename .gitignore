@@ -1,6 +1,6 @@
 node_modules/
 dist/
 coverage/
-.gstack/tmp/
+.gstack/
 .DS_Store
 *.tgz

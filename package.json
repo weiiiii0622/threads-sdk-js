@@ -1,6 +1,6 @@
 {
   "name": "thread-sdk-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Typed Node.js SDK for the Meta Threads API.",
   "license": "MIT",
   "author": "",
@@ -45,6 +45,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
+    "media",
     "API.md",
     "README.md",
     "CHANGELOG.md",

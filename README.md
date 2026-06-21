@@ -1,6 +1,27 @@
-# thread-sdk-js
+<p align="center">
+  <img src="https://raw.githubusercontent.com/weiiiii0622/threads-sdk/main/media/icon.png" alt="thread-sdk-js icon" width="144">
+</p>
 
-Typed Node.js SDK for the Meta Threads API.
+<h1 align="center">thread-sdk-js</h1>
+
+<p align="center">
+  Typed Node.js SDK for the Meta Threads API.
+  <br>
+  Publish posts, retrieve Threads data, manage replies, read insights, and keep docs aligned from one endpoint registry.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/thread-sdk-js"><img src="https://img.shields.io/npm/v/thread-sdk-js?color=111827" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/thread-sdk-js"><img src="https://img.shields.io/npm/dm/thread-sdk-js?color=2563eb" alt="npm downloads"></a>
+  <a href="https://github.com/weiiiii0622/threads-sdk/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/weiiiii0622/threads-sdk/release.yml?style=flat-square&logo=githubactions&label=release" alt="release status"></a>
+  <img src="https://img.shields.io/node/v/thread-sdk-js?style=flat-square&logo=nodedotjs" alt="Node.js version">
+  <img src="https://img.shields.io/badge/Threads_API-typed-111827?style=flat-square" alt="Typed Threads API">
+  <a href="https://github.com/weiiiii0622/threads-sdk/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/thread-sdk-js?color=0f766e" alt="license"></a>
+</p>
+
+```sh
+npm install thread-sdk-js
+```
 
 `thread-sdk-js` wraps the documented Threads Graph API endpoints with a small TypeScript client, token-safe errors, cursor pagination helpers, and a registry-generated API reference. It is intended for server-side Node.js apps that publish Threads posts, retrieve posts and replies, read insights, use oEmbed, and work with token/debug utilities without hand-building every request.
 
