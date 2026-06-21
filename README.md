@@ -186,13 +186,13 @@ If `npm view threads-sdk-js name version --json` returns `E404`, the name is sti
 
 Automated releases:
 
-1. Create an npm automation token with publish access.
-2. Add it to the GitHub repository as an Actions secret named `NPM_TOKEN`.
-3. Merge the release commit to `main`.
-4. Create and push a matching version tag, for example `v0.1.0`.
-5. Create a GitHub Release from that tag.
+1. Configure npm trusted publishing for GitHub Actions.
+2. Set the trusted publisher workflow filename to `release.yml`.
+3. Set the trusted publisher environment name to `npm`.
+4. Merge the release commit to `main`.
+5. Create and push a matching version tag, for example `v0.1.0`.
 
-When the GitHub Release is published, `.github/workflows/release.yml` runs `npm ci`, `npm run prepack`, and `npm publish --access public --provenance`.
+When the tag is pushed, `.github/workflows/release.yml` runs `npm ci`, `npm run prepack`, upgrades npm to a trusted-publishing-capable CLI, and runs `npm publish` through OIDC. No npm automation token is required.
 
 ## Version And Support Policy
 
