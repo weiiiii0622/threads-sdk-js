@@ -25,10 +25,10 @@ describe("generated docs", () => {
     expect(readme).toContain(
       "raw.githubusercontent.com/weiiiii0622/threads-sdk/main/media/icon.png"
     );
-    expect(readme).toContain("img.shields.io/npm/v/thread-sdk-js");
-    expect(readme).toContain("img.shields.io/npm/dm/thread-sdk-js");
+    expect(readme).toContain("img.shields.io/npm/v/threads-sdk-js");
+    expect(readme).toContain("img.shields.io/npm/dm/threads-sdk-js");
     expect(readme).toContain("actions/workflows/release.yml");
-    expect(readme).toContain("img.shields.io/node/v/thread-sdk-js");
+    expect(readme).toContain("img.shields.io/node/v/threads-sdk-js");
     expect(pkg.files).toContain("media");
   });
 });

@@ -1,6 +1,6 @@
 # Meta Threads API Reference
 
-Generated from the `thread-sdk-js` endpoint registry on 2026-06-21.
+Generated from the `threads-sdk-js` endpoint registry on 2026-06-21.
 
 Official sources:
 

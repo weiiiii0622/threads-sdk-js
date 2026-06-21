@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/weiiiii0622/threads-sdk/main/media/icon.png" alt="thread-sdk-js icon" width="144">
+  <img src="https://raw.githubusercontent.com/weiiiii0622/threads-sdk-js/main/media/icon.png" alt="threads-sdk-js icon" width="144">
 </p>
 
-<h1 align="center">thread-sdk-js</h1>
+<h1 align="center">threads-sdk-js</h1>
 
 <p align="center">
   Typed Node.js SDK for the Meta Threads API.
@@ -11,24 +11,24 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/thread-sdk-js"><img src="https://img.shields.io/npm/v/thread-sdk-js?color=111827" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/thread-sdk-js"><img src="https://img.shields.io/npm/dm/thread-sdk-js?color=2563eb" alt="npm downloads"></a>
-  <a href="https://github.com/weiiiii0622/threads-sdk/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/weiiiii0622/threads-sdk/release.yml?style=flat-square&logo=githubactions&label=release" alt="release status"></a>
-  <img src="https://img.shields.io/node/v/thread-sdk-js?style=flat-square&logo=nodedotjs" alt="Node.js version">
+  <a href="https://www.npmjs.com/package/threads-sdk-js"><img src="https://img.shields.io/npm/v/threads-sdk-js?color=111827" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/threads-sdk-js"><img src="https://img.shields.io/npm/dm/threads-sdk-js?color=2563eb" alt="npm downloads"></a>
+  <a href="https://github.com/weiiiii0622/threads-sdk-js/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/weiiiii0622/threads-sdk-js/release.yml?style=flat-square&logo=githubactions&label=release" alt="release status"></a>
+  <img src="https://img.shields.io/node/v/threads-sdk-js?style=flat-square&logo=nodedotjs" alt="Node.js version">
   <img src="https://img.shields.io/badge/Threads_API-typed-111827?style=flat-square" alt="Typed Threads API">
-  <a href="https://github.com/weiiiii0622/threads-sdk/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/thread-sdk-js?color=0f766e" alt="license"></a>
+  <a href="https://github.com/weiiiii0622/threads-sdk-js/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/threads-sdk-js?color=0f766e" alt="license"></a>
 </p>
 
 ```sh
-npm install thread-sdk-js
+npm install threads-sdk-js
 ```
 
-`thread-sdk-js` wraps the documented Threads Graph API endpoints with a small TypeScript client, token-safe errors, cursor pagination helpers, and a registry-generated API reference. It is intended for server-side Node.js apps that publish Threads posts, retrieve posts and replies, read insights, use oEmbed, and work with token/debug utilities without hand-building every request.
+`threads-sdk-js` wraps the documented Threads Graph API endpoints with a small TypeScript client, token-safe errors, cursor pagination helpers, and a registry-generated API reference. It is intended for server-side Node.js apps that publish Threads posts, retrieve posts and replies, read insights, use oEmbed, and work with token/debug utilities without hand-building every request.
 
 ## Install
 
 ```bash
-npm install thread-sdk-js
+npm install threads-sdk-js
 ```
 
 Node.js 20 or newer is required. The SDK uses native `fetch` by default and lets you inject a custom fetch implementation for tests or instrumentation.
@@ -36,7 +36,7 @@ Node.js 20 or newer is required. The SDK uses native `fetch` by default and lets
 ## Quickstart
 
 ```ts
-import { ThreadsClient } from "thread-sdk-js";
+import { ThreadsClient } from "threads-sdk-js";
 
 const client = new ThreadsClient({
   accessToken: process.env.THREADS_ACCESS_TOKEN
@@ -172,7 +172,7 @@ First manual publish:
 
 ```bash
 npm whoami
-npm view thread-sdk-js name version --json
+npm view threads-sdk-js name version --json
 npm run docs:check
 npm run typecheck
 npm run lint
@@ -182,7 +182,7 @@ npm pack --dry-run
 npm publish --access public
 ```
 
-If `npm view thread-sdk-js name version --json` returns `E404`, the name is still available to your npm account. Before publishing, make sure `package.json` has the intended version and that `CHANGELOG.md` describes the release.
+If `npm view threads-sdk-js name version --json` returns `E404`, the name is still available to your npm account. Before publishing, make sure `package.json` has the intended version and that `CHANGELOG.md` describes the release.
 
 Automated releases:
 

@@ -4,7 +4,7 @@
 
 ### Add npm release workflow
 
-**What:** Add a GitHub Actions workflow that builds, tests, packs, and publishes `thread-sdk-js` to npm.
+**What:** Add a GitHub Actions workflow that builds, tests, packs, and publishes `threads-sdk-js` to npm.
 
 **Why:** Manual npm publish is acceptable for v1, but repeated releases need reproducible build/test/docs/pack checks and a safer maintainer handoff.
 

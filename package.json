@@ -1,5 +1,5 @@
 {
-  "name": "thread-sdk-js",
+  "name": "threads-sdk-js",
   "version": "0.1.1",
   "description": "Typed Node.js SDK for the Meta Threads API.",
   "license": "MIT",
@@ -17,13 +17,13 @@
     "api",
     "typescript"
   ],
-  "homepage": "https://github.com/weiiiii0622/threads-sdk#readme",
+  "homepage": "https://github.com/weiiiii0622/threads-sdk-js#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/weiiiii0622/threads-sdk.git"
+    "url": "git+https://github.com/weiiiii0622/threads-sdk-js.git"
   },
   "bugs": {
-    "url": "https://github.com/weiiiii0622/threads-sdk/issues"
+    "url": "https://github.com/weiiiii0622/threads-sdk-js/issues"
   },
   "publishConfig": {
     "access": "public"

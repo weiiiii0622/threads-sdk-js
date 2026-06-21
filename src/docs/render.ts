@@ -114,7 +114,7 @@ export function renderApiMarkdown(): string {
 
   return `# Meta Threads API Reference
 
-Generated from the \`thread-sdk-js\` endpoint registry on ${generatedAt}.
+Generated from the \`threads-sdk-js\` endpoint registry on ${generatedAt}.
 
 Official sources:
 
