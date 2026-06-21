@@ -23,7 +23,7 @@ describe("generated docs", () => {
     const pkg = JSON.parse(packageJson) as { files: string[] };
 
     expect(readme).toContain(
-      "raw.githubusercontent.com/weiiiii0622/threads-sdk/main/media/icon.png"
+      "raw.githubusercontent.com/weiiiii0622/threads-sdk-js/main/media/icon.png"
     );
     expect(readme).toContain("img.shields.io/npm/v/threads-sdk-js");
     expect(readme).toContain("img.shields.io/npm/dm/threads-sdk-js");
