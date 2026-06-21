@@ -9,10 +9,12 @@ export interface ManageReplyParams {
 
 export interface PendingRepliesParams extends CursorParams {
   fields?: Fields;
+  reverse?: boolean;
+  approval_status?: string;
 }
 
 export interface ManagePendingReplyParams {
-  reply_approval_status: "APPROVED" | "REJECTED";
+  approve: boolean;
 }
 
 export class RepliesEndpoint {
@@ -42,7 +44,7 @@ export class RepliesEndpoint {
   managePending(replyId: string, params: ManagePendingReplyParams): Promise<{ success: boolean }> {
     return this.client.request({
       method: "POST",
-      path: "/{threads_reply_id}/manage_pending_replies",
+      path: "/{threads_reply_id}/manage_pending_reply",
       pathParams: { threads_reply_id: replyId },
       body: params
     });

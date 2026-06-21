@@ -79,6 +79,8 @@ export function helperName(endpoint: EndpointDefinition): string {
   const map: Record<string, string> = {
     "posts.createContainer": "`client.posts.createContainer()`",
     "posts.publishContainer": "`client.posts.publishContainer()`",
+    "posts.repost": "`client.posts.repost()`",
+    "posts.getContainerStatus": "`client.posts.getContainerStatus()`",
     "posts.getMedia": "`client.posts.get()`",
     "posts.listUserThreads": "`client.posts.listUserThreads()`",
     "posts.deleteMedia": "`client.posts.delete()`",
@@ -90,12 +92,19 @@ export function helperName(endpoint: EndpointDefinition): string {
     "replies.managePendingReply": "`client.replies.managePending()`",
     "profiles.getMe": "`client.profiles.getMe()`",
     "profiles.getUser": "`client.profiles.get()`",
+    "profiles.lookup": "`client.profiles.lookup()`",
+    "profiles.listPublicPosts": "`client.profiles.listPublicPosts()`",
+    "profiles.getPublishingLimit": "`client.profiles.getPublishingLimit()`",
+    "profiles.listReplies": "`client.profiles.listReplies()`",
     "insights.getMediaInsights": "`client.insights.getMedia()`",
     "insights.getUserInsights": "`client.insights.getUser()`",
     "search.keywordSearch": "`client.search.keyword()`",
+    "locations.get": "`client.locations.get()`",
     "location.search": "`client.search.location()`",
+    "tokens.exchangeAuthorizationCode": "`client.utilities.exchangeAuthorizationCode()`",
     "tokens.exchangeLongLived": "`client.utilities.exchangeLongLivedToken()`",
     "tokens.refreshLongLived": "`client.utilities.refreshLongLivedToken()`",
+    "tokens.getAppAccessToken": "`client.utilities.getAppAccessToken()`",
     "debug.debugToken": "`client.utilities.debugToken()`",
     "embed.oEmbed": "`client.utilities.oEmbed()`"
   };
@@ -118,12 +127,16 @@ Generated from the \`threads-sdk-js\` endpoint registry on ${generatedAt}.
 
 Official sources:
 
-- https://developers.facebook.com/docs/threads/
 - https://developers.facebook.com/social-technologies/threads-api/
-- https://developers.facebook.com/documentation/threads/create-posts
-- https://developers.facebook.com/documentation/threads/retrieve-and-discover-posts
-- https://developers.facebook.com/documentation/threads/retrieve-and-manage-replies
-- https://developers.facebook.com/docs/threads/insights/
+- https://developers.facebook.com/docs/threads/reference/publishing/
+- https://developers.facebook.com/docs/threads/reference/media-retrieval/
+- https://developers.facebook.com/docs/threads/reference/reply-management/
+- https://developers.facebook.com/docs/threads/reference/user/
+- https://developers.facebook.com/docs/threads/reference/locations/
+- https://developers.facebook.com/docs/threads/reference/location-search/
+- https://developers.facebook.com/docs/threads/reference/insights/
+- https://developers.facebook.com/docs/threads/reference/oembed/
+- https://developers.facebook.com/docs/threads/reference/debug/
 
 The registry separates callable Graph endpoints from dashboard-only setup, webhook payload types, and helper-only capabilities. Use \`client.request()\` when Meta adds a field before this SDK exposes a typed helper.
 

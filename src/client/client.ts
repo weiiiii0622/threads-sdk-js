@@ -41,7 +41,11 @@ function encodeFormBody(body: BodyParams = {}): URLSearchParams {
     }
 
     if (Array.isArray(value)) {
-      params.set(key, value.join(","));
+      if (value.some((item) => typeof item === "object" && item !== null)) {
+        params.set(key, JSON.stringify(value));
+      } else {
+        params.set(key, value.join(","));
+      }
     } else if (typeof value === "object") {
       params.set(key, JSON.stringify(value));
     } else {

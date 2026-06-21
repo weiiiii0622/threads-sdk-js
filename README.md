@@ -63,6 +63,8 @@ This table is generated from `src/registry/endpoints.ts`.
 |---|---|---:|---|---|---|---|
 | `posts.createContainer` | Posts and publishing | POST | `/{threads_user_id}/threads` | `graph_endpoint` | `supported` | `client.posts.createContainer()` |
 | `posts.publishContainer` | Posts and publishing | POST | `/{threads_user_id}/threads_publish` | `graph_endpoint` | `supported` | `client.posts.publishContainer()` |
+| `posts.repost` | Posts and publishing | POST | `/{threads_media_id}/repost` | `graph_endpoint` | `supported` | `client.posts.repost()` |
+| `posts.getContainerStatus` | Posts and publishing | GET | `/{threads_container_id}` | `graph_endpoint` | `supported` | `client.posts.getContainerStatus()` |
 | `posts.getMedia` | Posts and retrieval | GET | `/{threads_media_id}` | `graph_endpoint` | `supported` | `client.posts.get()` |
 | `posts.listUserThreads` | Posts and retrieval | GET | `/{threads_user_id}/threads` | `graph_endpoint` | `supported` | `client.posts.listUserThreads()` |
 | `posts.deleteMedia` | Posts and publishing | DELETE | `/{threads_media_id}` | `graph_endpoint` | `supported` | `client.posts.delete()` |
@@ -71,17 +73,24 @@ This table is generated from `src/registry/endpoints.ts`.
 | `posts.getMentions` | Posts and retrieval | GET | `/{threads_user_id}/mentions` | `graph_endpoint` | `supported` | `client.posts.getMentions()` |
 | `replies.manageReply` | Replies | POST | `/{threads_reply_id}/manage_reply` | `graph_endpoint` | `supported` | `client.replies.manage()` |
 | `replies.getPendingReplies` | Replies | GET | `/{threads_media_id}/pending_replies` | `graph_endpoint` | `supported` | `client.replies.getPending()` |
-| `replies.managePendingReply` | Replies | POST | `/{threads_reply_id}/manage_pending_replies` | `graph_endpoint` | `supported` | `client.replies.managePending()` |
+| `replies.managePendingReply` | Replies | POST | `/{threads_reply_id}/manage_pending_reply` | `graph_endpoint` | `supported` | `client.replies.managePending()` |
 | `profiles.getMe` | Profiles | GET | `/me` | `graph_endpoint` | `supported` | `client.profiles.getMe()` |
 | `profiles.getUser` | Profiles | GET | `/{threads_user_id}` | `graph_endpoint` | `supported` | `client.profiles.get()` |
+| `profiles.lookup` | Profiles | GET | `/profile_lookup` | `graph_endpoint` | `supported` | `client.profiles.lookup()` |
+| `profiles.listPublicPosts` | Profiles | GET | `/profile_posts` | `graph_endpoint` | `supported` | `client.profiles.listPublicPosts()` |
+| `profiles.getPublishingLimit` | Profiles | GET | `/{threads_user_id}/threads_publishing_limit` | `graph_endpoint` | `supported` | `client.profiles.getPublishingLimit()` |
+| `profiles.listReplies` | Profiles | GET | `/{threads_user_id}/replies` | `graph_endpoint` | `supported` | `client.profiles.listReplies()` |
 | `insights.getMediaInsights` | Insights | GET | `/{threads_media_id}/insights` | `graph_endpoint` | `supported` | `client.insights.getMedia()` |
 | `insights.getUserInsights` | Insights | GET | `/{threads_user_id}/threads_insights` | `graph_endpoint` | `supported` | `client.insights.getUser()` |
-| `search.keywordSearch` | Search and discovery | GET | `/keyword_search` | `graph_endpoint` | `beta` | `client.search.keyword()` |
-| `location.search` | Search and discovery | GET | `/location_search` | `graph_endpoint` | `beta` | `client.search.location()` |
+| `search.keywordSearch` | Search and discovery | GET | `/keyword_search` | `graph_endpoint` | `supported` | `client.search.keyword()` |
+| `locations.get` | Locations | GET | `/{location_id}` | `graph_endpoint` | `supported` | `client.locations.get()` |
+| `location.search` | Locations | GET | `/location_search` | `graph_endpoint` | `supported` | `client.search.location()` |
+| `tokens.exchangeAuthorizationCode` | Auth and debug | POST | `/oauth/access_token` | `graph_endpoint` | `supported` | `client.utilities.exchangeAuthorizationCode()` |
 | `tokens.exchangeLongLived` | Auth and debug | GET | `/access_token` | `graph_endpoint` | `supported` | `client.utilities.exchangeLongLivedToken()` |
 | `tokens.refreshLongLived` | Auth and debug | GET | `/refresh_access_token` | `graph_endpoint` | `supported` | `client.utilities.refreshLongLivedToken()` |
+| `tokens.getAppAccessToken` | Auth and debug | GET | `/oauth/access_token` | `graph_endpoint` | `supported` | `client.utilities.getAppAccessToken()` |
 | `debug.debugToken` | Auth and debug | GET | `/debug_token` | `graph_endpoint` | `supported` | `client.utilities.debugToken()` |
-| `embed.oEmbed` | Embeds | GET | `/oembed_threads` | `graph_endpoint` | `supported` | `client.utilities.oEmbed()` |
+| `embed.oEmbed` | Embeds | GET | `/oembed` | `graph_endpoint` | `supported` | `client.utilities.oEmbed()` |
 | `webhooks.setup` | Webhooks | - | - | `dashboard_setup` | `dashboard_only` | Documented capability; no Graph helper |
 | `webhooks.payload` | Webhooks | - | - | `webhook_payload` | `helper_only` | `verifyWebhookChallenge()` and exported webhook types |
 <!-- endpoint-status:end -->
@@ -98,10 +107,11 @@ const client = new ThreadsClient({
 
 Available helper groups:
 
-- `client.posts`: create containers, publish containers, retrieve media, list user posts, delete posts, replies, conversations, and mentions.
-- `client.replies`: hide or unhide replies, list pending replies, and approve or reject pending replies.
-- `client.profiles`: retrieve the authenticated profile or a user profile.
+- `client.posts`: create containers, publish containers, repost posts, check container status, retrieve media, list user posts, delete posts, replies, conversations, and mentions.
+- `client.replies`: hide or unhide replies, list pending replies, and approve or ignore pending replies.
+- `client.profiles`: retrieve app-scoped profiles, public profiles/posts, publishing limits, and user replies.
 - `client.insights`: retrieve media and user insight metrics.
+- `client.locations`: retrieve location objects by ID.
 - `client.search`: keyword and location search helpers where Meta grants access.
 - `client.utilities`: long-lived token exchange/refresh, token debug, and Threads oEmbed.
 - `client.request`: low-level escape hatch for newly documented fields or endpoints.

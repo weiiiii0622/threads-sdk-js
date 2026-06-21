@@ -15,8 +15,8 @@ const endpoints = [
     method: "POST",
     path: "/{threads_user_id}/threads",
     summary:
-      "Creates a media container for a text, image, video, carousel item, carousel album, reply, quote, link, or GIF post before publishing.",
-    docsUrl: `${CANONICAL_ROOT}/create-posts`,
+      "Creates a media container for a text, image, video, carousel item, carousel parent, reply, quote, link, or GIF post before publishing.",
+    docsUrl: `${DOCS_ROOT}/reference/publishing/`,
     permissions: ["threads_basic", "threads_content_publish"],
     parameters: [
       {
@@ -27,9 +27,9 @@ const endpoints = [
       },
       {
         name: "media_type",
-        type: "TEXT | IMAGE | VIDEO | CAROUSEL_ALBUM",
+        type: "TEXT | IMAGE | VIDEO | CAROUSEL",
         required: true,
-        enum: ["TEXT", "IMAGE", "VIDEO", "CAROUSEL_ALBUM"],
+        enum: ["TEXT", "IMAGE", "VIDEO", "CAROUSEL"],
         description: "Type of Threads container to create."
       },
       {
@@ -50,27 +50,90 @@ const endpoints = [
       {
         name: "is_carousel_item",
         type: "boolean",
-        description: "Marks an IMAGE or VIDEO container as a child item for a carousel album."
+        description: "Marks an IMAGE or VIDEO container as a child item for a carousel post."
       },
       {
-        name: "carousel_media_ids",
+        name: "children",
         type: "string[]",
-        description: "Container IDs for child carousel items when media_type is CAROUSEL_ALBUM."
+        description: "Container IDs for child carousel items when media_type is CAROUSEL."
+      },
+      {
+        name: "allowlisted_country_codes",
+        type: "string[]",
+        description:
+          "ISO 3166-1 alpha-2 country codes where this media should be shown."
       },
       {
         name: "alt_text",
         type: "string",
-        description: "Accessibility description for image media."
+        description: "Accessibility description for image or video media."
       },
       {
-        name: "link_attachment_url",
+        name: "link_attachment",
         type: "string",
         description: "URL to attach as a link preview to a text post."
       },
       {
-        name: "gif_attachment",
+        name: "poll_attachment",
+        type: "object",
+        description: "Poll attachment payload for text posts."
+      },
+      {
+        name: "topic_tag",
         type: "string",
-        description: "GIF attachment URL or ID supported by Threads publishing."
+        description: "Topic tag to add to the created post."
+      },
+      {
+        name: "location_id",
+        type: "string",
+        description: "Location ID to tag on the created post."
+      },
+      {
+        name: "auto_publish_text",
+        type: "boolean",
+        description: "Automatically publishes a text container when supported by Threads."
+      },
+      {
+        name: "text_entities",
+        type: "object[]",
+        description: "Structured text entities such as spoiler ranges."
+      },
+      {
+        name: "text_attachment",
+        type: "object",
+        description: "Structured text attachment payload for text posts."
+      },
+      {
+        name: "gif_attachment",
+        type: "object",
+        description: "GIF attachment payload supported by Threads publishing."
+      },
+      {
+        name: "is_ghost_post",
+        type: "boolean",
+        description: "Creates a ghost post when supported by Threads."
+      },
+      {
+        name: "is_spoiler_media",
+        type: "boolean",
+        description: "Marks attached image or video media as spoiler content."
+      },
+      {
+        name: "enable_reply_approvals",
+        type: "boolean",
+        description: "Enables reply approvals for the created post when supported by Threads."
+      },
+      {
+        name: "crossreshare_to_ig",
+        type: "boolean",
+        description:
+          "Cross-shares a Threads post to a linked Instagram account as a Story when supported."
+      },
+      {
+        name: "crossreshare_to_ig_dark_mode",
+        type: "boolean",
+        description:
+          "Cross-shares a Threads post to a linked Instagram account as a dark-mode Story when supported."
       },
       {
         name: "reply_to_id",
@@ -84,8 +147,15 @@ const endpoints = [
       },
       {
         name: "reply_control",
-        type: "everyone | accounts_you_follow | mentioned_only",
-        enum: ["everyone", "accounts_you_follow", "mentioned_only"],
+        type:
+          "everyone | accounts_you_follow | mentioned_only | parent_post_author_only | followers_only",
+        enum: [
+          "everyone",
+          "accounts_you_follow",
+          "mentioned_only",
+          "parent_post_author_only",
+          "followers_only"
+        ],
         description: "Controls who can reply to the created thread when supported by the API."
       }
     ],
@@ -106,7 +176,7 @@ const endpoints = [
     method: "POST",
     path: "/{threads_user_id}/threads_publish",
     summary: "Publishes a previously created Threads media container.",
-    docsUrl: `${CANONICAL_ROOT}/create-posts`,
+    docsUrl: `${DOCS_ROOT}/reference/publishing/`,
     permissions: ["threads_basic", "threads_content_publish"],
     parameters: [
       {
@@ -125,6 +195,61 @@ const endpoints = [
     responseFields: [{ name: "id", type: "string", description: "Published Threads media ID." }]
   },
   {
+    id: "posts.repost",
+    name: "Repost a Threads post",
+    category: "Posts and publishing",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "POST",
+    path: "/{threads_media_id}/repost",
+    summary: "Reposts a Threads post.",
+    docsUrl: `${DOCS_ROOT}/reference/publishing/`,
+    permissions: ["threads_basic", "threads_content_publish"],
+    parameters: [
+      {
+        name: "threads_media_id",
+        type: "string",
+        required: true,
+        description: "Threads media ID to repost."
+      }
+    ],
+    responseFields: [{ name: "id", type: "string", description: "Published repost media ID." }]
+  },
+  {
+    id: "posts.getContainerStatus",
+    name: "Check a media container's publishing status",
+    category: "Posts and publishing",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/{threads_container_id}",
+    summary: "Retrieves status fields for a Threads media container before or after publishing.",
+    docsUrl: `${DOCS_ROOT}/reference/publishing/`,
+    permissions: ["threads_basic", "threads_content_publish"],
+    parameters: [
+      {
+        name: "threads_container_id",
+        type: "string",
+        required: true,
+        description: "Threads media container ID."
+      },
+      {
+        name: "fields",
+        type: "string[]",
+        description: "Container status fields to request, such as id, status, and error_message."
+      }
+    ],
+    responseFields: [
+      { name: "id", type: "string", description: "Threads media container ID." },
+      { name: "status", type: "string", description: "Container publishing status." },
+      {
+        name: "error_message",
+        type: "string",
+        description: "Publishing error message when the container failed."
+      }
+    ]
+  },
+  {
     id: "posts.getMedia",
     name: "Retrieve a Threads post",
     category: "Posts and retrieval",
@@ -133,7 +258,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_media_id}",
     summary: "Retrieves fields for one Threads media object.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-discover-posts`,
+    docsUrl: `${DOCS_ROOT}/reference/media-retrieval/`,
     permissions: ["threads_basic", "threads_content_publish or applicable read permission"],
     parameters: [
       {
@@ -169,7 +294,29 @@ const endpoints = [
       { name: "shortcode", type: "string", description: "Shortcode identifier for the post." },
       { name: "thumbnail_url", type: "string", description: "Thumbnail URL for video media." },
       { name: "children", type: "object", description: "Carousel child media collection." },
-      { name: "is_quote_post", type: "boolean", description: "Whether the media is a quote post." }
+      { name: "is_quote_post", type: "boolean", description: "Whether the media is a quote post." },
+      { name: "alt_text", type: "string", description: "Accessibility description for image media." },
+      { name: "link_attachment_url", type: "string", description: "Attached link URL." },
+      { name: "has_replies", type: "boolean", description: "Whether the media has replies." },
+      { name: "is_reply", type: "boolean", description: "Whether the media is a reply." },
+      {
+        name: "is_reply_owned_by_me",
+        type: "boolean",
+        description: "Whether the reply is owned by the authenticated user."
+      },
+      { name: "root_post", type: "object", description: "Root post for reply media." },
+      { name: "replied_to", type: "object", description: "Media object this media replies to." },
+      { name: "hide_status", type: "string", description: "Reply hide status." },
+      { name: "reply_audience", type: "string", description: "Reply audience setting." },
+      { name: "quoted_post", type: "object", description: "Quoted post object." },
+      { name: "reposted_post", type: "object", description: "Reposted post object." },
+      { name: "gif_url", type: "string", description: "GIF media URL." },
+      { name: "poll_attachment", type: "object", description: "Poll attachment." },
+      { name: "topic_tag", type: "string", description: "Topic tag on the media." },
+      { name: "is_spoiler_media", type: "boolean", description: "Whether media is spoiler-marked." },
+      { name: "text_entities", type: "object[]", description: "Structured text entities." },
+      { name: "text_attachment", type: "object", description: "Structured text attachment." },
+      { name: "location_id", type: "string", description: "Tagged location ID." }
     ]
   },
   {
@@ -181,7 +328,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_user_id}/threads",
     summary: "Lists Threads posts for a Threads user with cursor pagination.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-discover-posts`,
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
     permissions: ["threads_basic", "threads_content_publish or applicable read permission"],
     parameters: [
       { name: "threads_user_id", type: "string", required: true, description: "Threads user ID." },
@@ -241,7 +388,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_media_id}/replies",
     summary: "Lists replies for a Threads media object with cursor pagination.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-manage-replies`,
+    docsUrl: `${DOCS_ROOT}/reference/reply-management/`,
     permissions: ["threads_basic", "threads_manage_replies"],
     parameters: [
       {
@@ -255,6 +402,16 @@ const endpoints = [
         name: "limit",
         type: "number",
         description: "Maximum number of replies to return in one page."
+      },
+      {
+        name: "reverse",
+        type: "boolean",
+        description: "Whether replies should be sorted in reverse chronological order."
+      },
+      {
+        name: "approval_status",
+        type: "string",
+        description: "Pending reply approval status filter."
       },
       { name: "before", type: "string", description: "Cursor for the previous page." },
       { name: "after", type: "string", description: "Cursor for the next page." }
@@ -273,7 +430,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_media_id}/conversation",
     summary: "Retrieves the conversation context for a Threads media object.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-manage-replies`,
+    docsUrl: `${DOCS_ROOT}/reference/reply-management/`,
     permissions: ["threads_basic", "threads_manage_replies"],
     parameters: [
       {
@@ -282,7 +439,14 @@ const endpoints = [
         required: true,
         description: "Threads media ID in the conversation."
       },
-      { name: "fields", type: "string[]", description: "Conversation media fields to return." }
+      { name: "fields", type: "string[]", description: "Conversation media fields to return." },
+      {
+        name: "reverse",
+        type: "boolean",
+        description: "Whether replies should be sorted in reverse chronological order."
+      },
+      { name: "before", type: "string", description: "Cursor for the previous page." },
+      { name: "after", type: "string", description: "Cursor for the next page." }
     ],
     responseFields: [
       { name: "data", type: "ThreadsMedia[]", description: "Conversation media objects." }
@@ -297,7 +461,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_user_id}/mentions",
     summary: "Lists Threads posts that mention the Threads user.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-discover-posts`,
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
     permissions: ["threads_basic", "threads_manage_mentions"],
     parameters: [
       {
@@ -330,7 +494,7 @@ const endpoints = [
     method: "POST",
     path: "/{threads_reply_id}/manage_reply",
     summary: "Hides or unhides a reply on Threads when the authenticated user can manage it.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-manage-replies`,
+    docsUrl: `${DOCS_ROOT}/reference/reply-management/`,
     permissions: ["threads_manage_replies"],
     parameters: [
       {
@@ -359,7 +523,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_media_id}/pending_replies",
     summary: "Lists pending replies that require approval for a Threads media object.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-manage-replies`,
+    docsUrl: `${DOCS_ROOT}/reference/reply-management/`,
     permissions: ["threads_manage_replies"],
     parameters: [
       {
@@ -374,6 +538,11 @@ const endpoints = [
         type: "number",
         description: "Maximum number of pending replies in one page."
       },
+      {
+        name: "reverse",
+        type: "boolean",
+        description: "Whether replies should be sorted in reverse chronological order."
+      },
       { name: "before", type: "string", description: "Cursor for the previous page." },
       { name: "after", type: "string", description: "Cursor for the next page." }
     ],
@@ -384,14 +553,14 @@ const endpoints = [
   },
   {
     id: "replies.managePendingReply",
-    name: "Approve or reject a pending reply",
+    name: "Approve or ignore a pending reply",
     category: "Replies",
     kind: "graph_endpoint",
     status: "supported",
     method: "POST",
-    path: "/{threads_reply_id}/manage_pending_replies",
-    summary: "Approves or rejects a pending reply.",
-    docsUrl: `${CANONICAL_ROOT}/retrieve-and-manage-replies`,
+    path: "/{threads_reply_id}/manage_pending_reply",
+    summary: "Approves or ignores a pending reply.",
+    docsUrl: `${DOCS_ROOT}/reference/reply-management/`,
     permissions: ["threads_manage_replies"],
     parameters: [
       {
@@ -401,11 +570,10 @@ const endpoints = [
         description: "Pending Threads reply media ID."
       },
       {
-        name: "reply_approval_status",
-        type: "APPROVED | REJECTED",
+        name: "approve",
+        type: "boolean",
         required: true,
-        enum: ["APPROVED", "REJECTED"],
-        description: "Approval decision for the pending reply."
+        description: "True to approve the reply, false to ignore it."
       }
     ],
     responseFields: [
@@ -421,7 +589,7 @@ const endpoints = [
     method: "GET",
     path: "/me",
     summary: "Retrieves profile fields for the authenticated Threads user.",
-    docsUrl: `${DOCS_ROOT}/profile-discovery/`,
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
     permissions: ["threads_basic"],
     parameters: [{ name: "fields", type: "string[]", description: "Profile fields to return." }],
     responseFields: [
@@ -429,7 +597,13 @@ const endpoints = [
       { name: "username", type: "string", description: "Threads username." },
       { name: "name", type: "string", description: "Display name." },
       { name: "threads_profile_picture_url", type: "string", description: "Profile picture URL." },
-      { name: "threads_biography", type: "string", description: "Profile biography." }
+      { name: "threads_biography", type: "string", description: "Profile biography." },
+      { name: "is_verified", type: "boolean", description: "Whether the profile is verified." },
+      {
+        name: "recently_searched_keywords",
+        type: "string[]",
+        description: "Recently searched keywords when returned by the API."
+      }
     ]
   },
   {
@@ -441,7 +615,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_user_id}",
     summary: "Retrieves profile fields for a Threads user ID.",
-    docsUrl: `${DOCS_ROOT}/profile-discovery/`,
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
     permissions: ["threads_basic"],
     parameters: [
       { name: "threads_user_id", type: "string", required: true, description: "Threads user ID." },
@@ -452,7 +626,130 @@ const endpoints = [
       { name: "username", type: "string", description: "Threads username." },
       { name: "name", type: "string", description: "Display name." },
       { name: "threads_profile_picture_url", type: "string", description: "Profile picture URL." },
-      { name: "threads_biography", type: "string", description: "Profile biography." }
+      { name: "threads_biography", type: "string", description: "Profile biography." },
+      { name: "is_verified", type: "boolean", description: "Whether the profile is verified." },
+      {
+        name: "recently_searched_keywords",
+        type: "string[]",
+        description: "Recently searched keywords when returned by the API."
+      }
+    ]
+  },
+  {
+    id: "profiles.lookup",
+    name: "Look up a public Threads profile",
+    category: "Profiles",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/profile_lookup",
+    summary: "Looks up a public Threads profile by exact username.",
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
+    permissions: ["threads_basic"],
+    parameters: [
+      {
+        name: "username",
+        type: "string",
+        required: true,
+        description: "Exact Threads handle or unique username."
+      }
+    ],
+    responseFields: [
+      { name: "id", type: "string", description: "Threads user ID." },
+      { name: "username", type: "string", description: "Threads username." },
+      { name: "name", type: "string", description: "Display name." },
+      { name: "threads_profile_picture_url", type: "string", description: "Profile picture URL." },
+      { name: "threads_biography", type: "string", description: "Profile biography." },
+      { name: "is_verified", type: "boolean", description: "Whether the profile is verified." }
+    ]
+  },
+  {
+    id: "profiles.listPublicPosts",
+    name: "Retrieve a public profile's Threads posts",
+    category: "Profiles",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/profile_posts",
+    summary: "Lists Threads posts for a public profile by exact username.",
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
+    permissions: ["threads_basic"],
+    parameters: [
+      {
+        name: "username",
+        type: "string",
+        required: true,
+        description: "Exact Threads handle or unique username."
+      },
+      { name: "fields", type: "string[]", description: "Media fields to return." },
+      { name: "since", type: "string | number", description: "Start date or Unix timestamp." },
+      { name: "until", type: "string | number", description: "End date or Unix timestamp." },
+      { name: "limit", type: "number", description: "Maximum number of posts to return." },
+      { name: "before", type: "string", description: "Cursor for the previous page." },
+      { name: "after", type: "string", description: "Cursor for the next page." }
+    ],
+    responseFields: [
+      { name: "data", type: "ThreadsMedia[]", description: "Page of public profile posts." },
+      { name: "paging", type: "object", description: "Cursor pagination metadata." }
+    ]
+  },
+  {
+    id: "profiles.getPublishingLimit",
+    name: "Retrieve Threads publishing limit usage",
+    category: "Profiles",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/{threads_user_id}/threads_publishing_limit",
+    summary: "Checks the app user's current publishing rate limit usage.",
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
+    permissions: ["threads_basic"],
+    parameters: [
+      { name: "threads_user_id", type: "string", required: true, description: "Threads user ID." },
+      { name: "fields", type: "string[]", description: "Publishing limit fields to return." }
+    ],
+    responseFields: [
+      { name: "quota_usage", type: "number", description: "Create-post quota usage." },
+      { name: "config", type: "object", description: "Create-post quota config." },
+      { name: "reply_quota_usage", type: "number", description: "Reply quota usage." },
+      { name: "reply_config", type: "object", description: "Reply quota config." },
+      { name: "delete_quota_usage", type: "number", description: "Delete quota usage." },
+      { name: "delete_config", type: "object", description: "Delete quota config." },
+      {
+        name: "location_search_quota_usage",
+        type: "number",
+        description: "Location search quota usage."
+      },
+      {
+        name: "location_search_config",
+        type: "object",
+        description: "Location search quota config."
+      }
+    ]
+  },
+  {
+    id: "profiles.listReplies",
+    name: "Retrieve a user's Threads replies",
+    category: "Profiles",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/{threads_user_id}/replies",
+    summary: "Lists replies created by a Threads user with cursor pagination.",
+    docsUrl: `${DOCS_ROOT}/reference/user/`,
+    permissions: ["threads_basic"],
+    parameters: [
+      { name: "threads_user_id", type: "string", required: true, description: "Threads user ID." },
+      { name: "fields", type: "string[]", description: "Reply fields to return." },
+      { name: "since", type: "string | number", description: "Start date or Unix timestamp." },
+      { name: "until", type: "string | number", description: "End date or Unix timestamp." },
+      { name: "limit", type: "number", description: "Maximum number of replies to return." },
+      { name: "before", type: "string", description: "Cursor for the previous page." },
+      { name: "after", type: "string", description: "Cursor for the next page." }
+    ],
+    responseFields: [
+      { name: "data", type: "ThreadsMedia[]", description: "Page of reply media objects." },
+      { name: "paging", type: "object", description: "Cursor pagination metadata." }
     ]
   },
   {
@@ -464,7 +761,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_media_id}/insights",
     summary: "Retrieves metrics for a Threads media object.",
-    docsUrl: `${DOCS_ROOT}/insights/`,
+    docsUrl: `${DOCS_ROOT}/reference/insights/`,
     permissions: ["threads_read_insights"],
     parameters: [
       {
@@ -504,7 +801,7 @@ const endpoints = [
     method: "GET",
     path: "/{threads_user_id}/threads_insights",
     summary: "Retrieves account-level metrics for a Threads user.",
-    docsUrl: `${DOCS_ROOT}/insights/`,
+    docsUrl: `${DOCS_ROOT}/reference/insights/`,
     permissions: ["threads_read_insights"],
     parameters: [
       { name: "threads_user_id", type: "string", required: true, description: "Threads user ID." },
@@ -540,14 +837,32 @@ const endpoints = [
     name: "Keyword search",
     category: "Search and discovery",
     kind: "graph_endpoint",
-    status: "beta",
+    status: "supported",
     method: "GET",
     path: "/keyword_search",
     summary: "Searches recent public Threads posts by keyword when the app has access.",
-    docsUrl: `${DOCS_ROOT}/keyword-search/`,
+    docsUrl: `${DOCS_ROOT}/reference/media-retrieval/`,
     permissions: ["threads_keyword_search"],
     parameters: [
       { name: "q", type: "string", required: true, description: "Keyword query." },
+      {
+        name: "search_type",
+        type: "TOP | RECENT",
+        enum: ["TOP", "RECENT"],
+        description: "Search behavior: popular results or recent results."
+      },
+      {
+        name: "search_mode",
+        type: "KEYWORD | TAG",
+        enum: ["KEYWORD", "TAG"],
+        description: "Search mode: treat q as a keyword or a topic tag."
+      },
+      {
+        name: "media_type",
+        type: "TEXT | IMAGE | VIDEO",
+        enum: ["TEXT", "IMAGE", "VIDEO"],
+        description: "Restricts search to a supported media type."
+      },
       { name: "fields", type: "string[]", description: "Media fields to return." },
       { name: "limit", type: "number", description: "Maximum number of results in one page." },
       { name: "before", type: "string", description: "Cursor for the previous page." },
@@ -564,27 +879,116 @@ const endpoints = [
     notes: ["Access and behavior can depend on Meta availability and app review."]
   },
   {
+    id: "locations.get",
+    name: "Retrieve a Threads location",
+    category: "Locations",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/{location_id}",
+    summary: "Retrieves a Threads location object by ID.",
+    docsUrl: `${DOCS_ROOT}/reference/locations/`,
+    permissions: ["threads_basic"],
+    parameters: [
+      {
+        name: "location_id",
+        type: "string",
+        required: true,
+        description: "Threads location ID."
+      },
+      { name: "fields", type: "string[]", description: "Location fields to return." }
+    ],
+    responseFields: [
+      { name: "id", type: "string", description: "Threads location ID." },
+      { name: "name", type: "string", description: "Location name." },
+      { name: "address", type: "string", description: "Location address." },
+      { name: "city", type: "string", description: "Location city." },
+      { name: "country", type: "string", description: "Location country." },
+      { name: "latitude", type: "number", description: "Location latitude." },
+      { name: "longitude", type: "number", description: "Location longitude." },
+      { name: "postal_code", type: "string", description: "Location postal code." }
+    ]
+  },
+  {
     id: "location.search",
     name: "Location search",
-    category: "Search and discovery",
+    category: "Locations",
     kind: "graph_endpoint",
-    status: "beta",
+    status: "supported",
     method: "GET",
     path: "/location_search",
     summary:
       "Searches location references usable by Threads publishing or discovery features when available.",
-    docsUrl: `${DOCS_ROOT}/location-search/`,
+    docsUrl: `${DOCS_ROOT}/reference/location-search/`,
     permissions: ["threads_basic"],
     parameters: [
-      { name: "q", type: "string", required: true, description: "Location query." },
-      { name: "latitude", type: "number", description: "Latitude bias for the search." },
-      { name: "longitude", type: "number", description: "Longitude bias for the search." },
-      { name: "limit", type: "number", description: "Maximum number of locations in one page." }
+      { name: "query", type: "string", description: "Location query string." },
+      {
+        name: "q",
+        type: "string",
+        description: "Postman collection alias for the location query string."
+      },
+      {
+        name: "latitude",
+        type: "number",
+        description: "Latitude coordinate. Must be used with longitude."
+      },
+      {
+        name: "longitude",
+        type: "number",
+        description: "Longitude coordinate. Must be used with latitude."
+      },
+      { name: "fields", type: "string[]", description: "Location fields to return." }
     ],
     responseFields: [
-      { name: "data", type: "Location[]", description: "Matching location references." }
+      { name: "id", type: "string", description: "Threads location ID." },
+      { name: "name", type: "string", description: "Location name." },
+      { name: "address", type: "string", description: "Location address." },
+      { name: "city", type: "string", description: "Location city." },
+      { name: "country", type: "string", description: "Location country." },
+      { name: "latitude", type: "number", description: "Location latitude." },
+      { name: "longitude", type: "number", description: "Location longitude." },
+      { name: "postal_code", type: "string", description: "Location postal code." }
     ],
-    notes: ["Access and behavior can depend on Meta availability and app review."]
+    notes: ["Search by query or by latitude/longitude coordinates."]
+  },
+  {
+    id: "tokens.exchangeAuthorizationCode",
+    name: "Exchange authorization code for Threads token",
+    category: "Auth and debug",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "POST",
+    path: "/oauth/access_token",
+    summary: "Exchanges an OAuth authorization code for a short-lived Threads access token.",
+    docsUrl: `${DOCS_ROOT}/get-started/authentication/`,
+    permissions: ["OAuth app credentials"],
+    parameters: [
+      { name: "client_id", type: "string", required: true, description: "Threads app ID." },
+      { name: "client_secret", type: "string", required: true, description: "App client secret." },
+      {
+        name: "code",
+        type: "string",
+        required: true,
+        description: "Authorization code returned to the redirect URI."
+      },
+      {
+        name: "grant_type",
+        type: "authorization_code",
+        required: true,
+        description: "Authorization code grant type."
+      },
+      {
+        name: "redirect_uri",
+        type: "string",
+        required: true,
+        description: "Redirect URI used during authorization."
+      }
+    ],
+    responseFields: [
+      { name: "access_token", type: "string", description: "Short-lived Threads access token." },
+      { name: "user_id", type: "string", description: "Threads user ID." }
+    ]
   },
   {
     id: "tokens.exchangeLongLived",
@@ -654,6 +1058,32 @@ const endpoints = [
     ]
   },
   {
+    id: "tokens.getAppAccessToken",
+    name: "Get Threads app access token",
+    category: "Auth and debug",
+    kind: "graph_endpoint",
+    status: "supported",
+    method: "GET",
+    path: "/oauth/access_token",
+    summary: "Gets an app access token using Threads app credentials.",
+    docsUrl: `${DOCS_ROOT}/get-started/authentication/`,
+    permissions: ["OAuth app credentials"],
+    parameters: [
+      {
+        name: "grant_type",
+        type: "client_credentials",
+        required: true,
+        description: "Client credentials grant type."
+      },
+      { name: "client_id", type: "string", required: true, description: "Threads app ID." },
+      { name: "client_secret", type: "string", required: true, description: "App client secret." }
+    ],
+    responseFields: [
+      { name: "access_token", type: "string", description: "Threads app access token." },
+      { name: "token_type", type: "string", description: "Token type." }
+    ]
+  },
+  {
     id: "debug.debugToken",
     name: "Debug a Threads access token",
     category: "Auth and debug",
@@ -662,7 +1092,7 @@ const endpoints = [
     method: "GET",
     path: "/debug_token",
     summary: "Inspects a token with an app access token.",
-    docsUrl: `${DOCS_ROOT}/troubleshooting/`,
+    docsUrl: `${DOCS_ROOT}/reference/debug/`,
     permissions: ["App access token"],
     parameters: [
       { name: "input_token", type: "string", required: true, description: "Token to inspect." },
@@ -684,28 +1114,25 @@ const endpoints = [
     kind: "graph_endpoint",
     status: "supported",
     method: "GET",
-    path: "/oembed_threads",
+    path: "/oembed",
     summary: "Retrieves oEmbed metadata for a public Threads URL.",
-    docsUrl: `${DOCS_ROOT}/oembed/`,
+    docsUrl: `${DOCS_ROOT}/reference/oembed/`,
     permissions: ["App access token or documented oEmbed access"],
     parameters: [
       { name: "url", type: "string", required: true, description: "Public Threads post URL." },
-      { name: "maxwidth", type: "number", description: "Maximum embed width." },
-      { name: "omitscript", type: "boolean", description: "Whether to omit the embed script." },
       {
-        name: "hidecaption",
-        type: "boolean",
-        description: "Whether to hide caption text when supported."
+        name: "maxwidth",
+        type: "number",
+        description: "Maximum embed width, from 320 to 658 pixels."
       }
     ],
     responseFields: [
       { name: "html", type: "string", description: "Embed HTML." },
-      { name: "author_name", type: "string", description: "Author display name." },
-      { name: "author_url", type: "string", description: "Author profile URL." },
       { name: "provider_name", type: "string", description: "Provider name." },
       { name: "provider_url", type: "string", description: "Provider URL." },
       { name: "type", type: "string", description: "oEmbed type." },
-      { name: "version", type: "string", description: "oEmbed version." }
+      { name: "version", type: "string", description: "oEmbed version." },
+      { name: "width", type: "number", description: "Width in pixels required to display HTML." }
     ]
   },
   {

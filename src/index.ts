@@ -1,6 +1,7 @@
 import { ThreadsClient as BaseThreadsClient } from "./client/client.js";
 import type { ThreadsClientOptions } from "./client/types.js";
 import { InsightsEndpoint } from "./endpoints/insights.js";
+import { LocationsEndpoint } from "./endpoints/locations.js";
 import { PostsEndpoint } from "./endpoints/posts.js";
 import { ProfilesEndpoint } from "./endpoints/profiles.js";
 import { RepliesEndpoint } from "./endpoints/replies.js";
@@ -12,6 +13,7 @@ export class ThreadsClient extends BaseThreadsClient {
   readonly replies: RepliesEndpoint;
   readonly profiles: ProfilesEndpoint;
   readonly insights: InsightsEndpoint;
+  readonly locations: LocationsEndpoint;
   readonly search: SearchEndpoint;
   readonly utilities: UtilitiesEndpoint;
 
@@ -21,6 +23,7 @@ export class ThreadsClient extends BaseThreadsClient {
     this.replies = new RepliesEndpoint(this);
     this.profiles = new ProfilesEndpoint(this);
     this.insights = new InsightsEndpoint(this);
+    this.locations = new LocationsEndpoint(this);
     this.search = new SearchEndpoint(this);
     this.utilities = new UtilitiesEndpoint(this);
   }

@@ -6,13 +6,17 @@ import type { CursorParams, Fields } from "./shared.js";
 export interface KeywordSearchParams extends CursorParams {
   q: string;
   fields?: Fields;
+  search_type?: "TOP" | "RECENT";
+  search_mode?: "KEYWORD" | "TAG";
+  media_type?: "TEXT" | "IMAGE" | "VIDEO";
 }
 
 export interface LocationSearchParams {
-  q: string;
+  q?: string;
+  query?: string;
   latitude?: number;
   longitude?: number;
-  limit?: number;
+  fields?: Fields;
 }
 
 export interface LocationResult {

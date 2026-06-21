@@ -28,12 +28,24 @@ describe("ThreadsClient transport", () => {
     await client.request({
       method: "POST",
       path: "/me/threads",
-      body: { media_type: "TEXT", text: "hello", carousel_media_ids: ["a", "b"] }
+      body: {
+        media_type: "CAROUSEL",
+        text: "hello",
+        children: ["a", "b"],
+        poll_attachment: { option_a: "first", option_b: "second" },
+        text_entities: [{ entity_type: "SPOILER", offset: 0, length: 4 }]
+      }
     });
 
     expect(mock.calls[0]?.init.method).toBe("POST");
-    expect(mock.calls[0]?.body.get("media_type")).toBe("TEXT");
-    expect(mock.calls[0]?.body.get("carousel_media_ids")).toBe("a,b");
+    expect(mock.calls[0]?.body.get("media_type")).toBe("CAROUSEL");
+    expect(mock.calls[0]?.body.get("children")).toBe("a,b");
+    expect(mock.calls[0]?.body.get("poll_attachment")).toBe(
+      '{"option_a":"first","option_b":"second"}'
+    );
+    expect(mock.calls[0]?.body.get("text_entities")).toBe(
+      '[{"entity_type":"SPOILER","offset":0,"length":4}]'
+    );
   });
 
   it("normalizes Graph API errors and redacts token values", async () => {
